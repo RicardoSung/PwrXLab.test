@@ -5,9 +5,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const sortSelect = document.getElementById("sort-select");
   const searchInput = document.getElementById("search-input");
   const journalListEl = document.getElementById("journal-list");
+  const bookListEl = document.getElementById("book-list");
   const confListEl = document.getElementById("conf-list");
 
   let entries = [];
+  const doiIconSvg =
+    '<svg class="pub-doi-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+    '<path d="M15 7h3a5 5 0 0 1 0 10h-3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '<path d="M9 17H6a5 5 0 0 1 0-10h3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '<path d="M8 12h8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>' +
+    "</svg>";
 
   // read ExPub.txt
   fetch("../Resources/pub/ExPub.txt")
@@ -38,6 +45,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!entries.length) {
       journalListEl.innerHTML = "";
       confListEl.innerHTML = "";
+      if (bookListEl) {
+        bookListEl.innerHTML = "";
+      }
       emptyHintEl.style.display = "none";
       return;
     }
@@ -47,76 +57,73 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let data = entries.slice();
 
-    // 搜索过滤：标题 / 作者 / 期刊 / 会议名等
-    if (keyword) {
-      data = data.filter((e) => {
-        const haystack = [
-          e.title,
-          e.rawAuthors,
-          e.journal,
-          e.booktitle,
-          e.publisher,
-          e.organization
-        ]
-          .filter(Boolean)
-          .join(" ")
-          .toLowerCase();
-        return haystack.includes(keyword);
-      });
-    }
+    // ... 搜索过滤 & 排序 ...
 
-    // 排序
-    data.sort((a, b) => {
-      if (sortMode === "year-desc") {
-        return (b.year || 0) - (a.year || 0);
-      }
-      if (sortMode === "year-asc") {
-        return (a.year || 0) - (b.year || 0);
-      }
-      if (sortMode === "title-asc") {
-        return (a.title || "").localeCompare(b.title || "");
-      }
-      return 0;
+    const books = bookListEl ? data.filter(isBookEntry) : [];
+    const journals = data.filter(function (e) {
+      return isJournalEntry(e) && !(bookListEl && isBookEntry(e));
+    });
+    const conferences = data.filter(function (e) {
+      return isConferenceEntry(e) && !(bookListEl && isBookEntry(e));
     });
 
-    // 分类：期刊 / 会议
-    const journals = data.filter(isJournalEntry);
-    const conferences = data.filter(isConferenceEntry);
-
-    // 如果两类都为空，就提示
-    if (!journals.length && !conferences.length) {
+    // 如果三类都为空，就提示
+    if (!journals.length && !conferences.length && (!bookListEl || !books.length)) {
       journalListEl.innerHTML = "";
       confListEl.innerHTML = "";
+      if (bookListEl) {
+        bookListEl.innerHTML = "";
+      }
       emptyHintEl.style.display = "block";
       return;
     } else {
       emptyHintEl.style.display = "none";
     }
 
-    // 分别渲染期刊和会议列表，编号在各自类别内从 [1] 开始
+    // Books
+    if (bookListEl) {
+      bookListEl.innerHTML = books
+        .map(function (entry, idx) {
+          return buildPubListItem(entry, idx + 1);
+        })
+        .join("");
+    }
+
+    // Journal
     journalListEl.innerHTML = journals
-      .map((entry, idx) => {
-        const ieeeText = formatIEEE(entry);
-        return `<li class="pub-item">
-          <div class="pub-text">
-            <span class="pub-index">[${idx + 1}]</span>${ieeeText}
-          </div>
-        </li>`;
+      .map(function (entry, idx) {
+        return buildPubListItem(entry, idx + 1);
       })
       .join("");
 
+    // Conference
     confListEl.innerHTML = conferences
-      .map((entry, idx) => {
-        const ieeeText = formatIEEE(entry);
-        return `<li class="pub-item">
-          <div class="pub-text">
-            <span class="pub-index">[${idx + 1}]</span>${ieeeText}
-          </div>
-        </li>`;
+      .map(function (entry, idx) {
+        return buildPubListItem(entry, idx + 1);
       })
       .join("");
   }
-});
+
+  function buildPubListItem(entry, displayIndex) {
+    const ieeeText = formatIEEE(entry);
+    const doi = extractDoiFromEntry(entry);
+    const doiUrl = doi ? "https://doi.org/" + encodeURIComponent(doi) : "";
+    const doiLink = doiUrl
+      ? `<a class="pub-doi-link" href="${doiUrl}" target="_blank" rel="noopener noreferrer" aria-label="Open DOI link" title="Open DOI">${doiIconSvg}</a>`
+      : "";
+
+    return (
+      '<li class="pub-item">' +
+      '<div class="pub-text">' +
+      '<span class="pub-index">[' +
+      displayIndex +
+      "]</span>" +
+      ieeeText +
+      "</div>" +
+      doiLink +
+      "</li>"
+    );
+  }
 
 /* ---------------- BibTeX 解析 ---------------- */
 
@@ -166,6 +173,8 @@ function parseBibTeX(text) {
   return entries;
 }
 
+
+
 /* ---------------- 分类辅助函数 ---------------- */
 
 function isJournalEntry(e) {
@@ -174,6 +183,31 @@ function isJournalEntry(e) {
 
 function isConferenceEntry(e) {
   return e.type === "inproceedings" || !!e.booktitle;
+}
+
+function isBookEntry(e) {
+  if (!e) return false;
+  const t = (e.type || "").toLowerCase();
+  const hasPublisher = !!e.publisher;
+  const hasJournalOrConf = !!e.journal || !!e.booktitle;
+
+  // 常见书籍类型标记
+  if (
+    t === "book" ||
+    t === "books" ||
+    t === "book chapter" ||
+    t === "chapter" ||
+    t === "inbook"
+  ) {
+    return true;
+  }
+
+  // 没有 journal / booktitle，但有 publisher，也视为 Books
+  if (hasPublisher && !hasJournalOrConf) {
+    return true;
+  }
+
+  return false;
 }
 
 /* ---------------- 作者格式：IEEE ---------------- */
@@ -258,6 +292,36 @@ function formatAuthorsIEEE(authors) {
   return `${before}, and ${last}`;
 }
 
+function normalizeDoi(raw) {
+  if (!raw) return "";
+  let doi = String(raw).trim();
+  doi = doi.replace(/^https?:\/\/(dx\.)?doi\.org\//i, "");
+  doi = doi.replace(/^doi:\s*/i, "");
+  doi = doi.replace(/[)\].,;:]+$/g, "");
+  return doi;
+}
+
+function extractDoiFromEntry(entry) {
+  if (!entry) return "";
+  if (entry.doi) {
+    return normalizeDoi(entry.doi);
+  }
+  if (entry.url && /10\.\d/.test(entry.url)) {
+    return normalizeDoi(entry.url);
+  }
+  const text = [
+    entry.citation,
+    entry.note,
+    entry.journal,
+    entry.booktitle,
+    entry.title
+  ]
+    .filter(Boolean)
+    .join(" ");
+  const m = text.match(/\b10\.\d{4,9}\/\S+\b/);
+  return m ? normalizeDoi(m[0]) : "";
+}
+
 /* ---------------- IEEEtran 风格格式化 ---------------- */
 
 /**
@@ -270,9 +334,16 @@ function formatIEEE(entry) {
   const title = entry.title || "";
   const year = entry.year != null ? String(entry.year) : "n.d.";
   const pages = entry.pages ? entry.pages.replace(/--/g, "–") : "";
-  const url = entry.url || ""; // 如果 BibTeX 里有 url 字段就当作链接
 
-  // 标题加引号；如有 URL 就超链接
+  const doi = extractDoiFromEntry(entry);
+  let url = "";
+  if (doi) {
+    url = "https://doi.org/" + encodeURIComponent(doi);
+  } else if (entry.url) {
+    url = entry.url;
+  }
+
+  // 标题加引号；如有 URL/DOI 就超链接
   const quotedTitle = `"${title}"`;
   const titleHTML = url
     ? `<a class="pub-title-link" href="${url}" target="_blank" rel="noopener noreferrer">${quotedTitle}</a>`
@@ -350,3 +421,4 @@ function formatIEEE(entry) {
   }
   return base + year + ".";
 }
+});

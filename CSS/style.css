@@ -185,6 +185,135 @@ h2::after {
   box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
   box-sizing: border-box;
 }
+/* 
+/* 点击头像后展开的抽屉区域 */
+.person-drawer {
+  flex: 0 0 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-top: 8px;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-soft);
+  padding: 16px 20px;
+}
+
+.person-drawer-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+
+/* 头部：头像 + 文本一体化 */
+.person-drawer-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.person-drawer-avatar-wrap {
+  flex-shrink: 0;
+}
+
+.person-drawer-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.person-drawer-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.person-drawer-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.person-drawer-position {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-sub);
+}
+
+.person-drawer-section + .person-drawer-section {
+  margin-top: 12px;
+}
+
+.person-drawer-section-title {
+  margin: 0 0 4px;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-main);
+}
+
+.person-drawer-text {
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  color: var(--text-sub);
+}
+
+.person-drawer-pubs {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* 抽屉展开时，高亮卡片边框 */
+.person-card.is-open {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-soft);
+}
+
+/* 头像按钮：去掉 button 默认样式 */
+.person-photo-button {
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: block;
+}
+
+/* 非 PI 基本信息区域 */
+.person-basic {
+  margin-top: 8px;
+}
+
+.person-position {
+  font-size: 14px;
+  color: var(--text-sub);
+  margin-bottom: 4px;
+}
+
+.person-contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+/* 利用已有的 icon 样式 */
+.icon-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-image {
+  width: 18px;
+  height: 18px;
+} 
+
+
+
+
 
 /* 统一头像显示尺寸，和 card 宽度解耦 */
 .person-photo {
@@ -272,25 +401,25 @@ h2::after {
   padding-left: 20px;
 }
 
-/* 非 PI：每行最多四个（大屏） */
+/* 非 PI：大屏每行最多五个 */
 @media (min-width: 1100px) {
   .people-container:not(#pi-container) .person-card {
-    flex: 0 0 calc(33.333% - 16px);
-    max-width: calc(33.333% - 16px);
+    flex: 0 0 calc(20% - 16px);
+    max-width: calc(20% - 16px);
   }
 }
 
 @media (max-width: 1099px) and (min-width: 768px) {
   .people-container:not(#pi-container) .person-card {
-    flex: 0 0 calc(33.333% - 11px);
-    max-width: calc(33.333% - 11px);
+    flex: 0 0 calc(25% - 11px);
+    max-width: calc(25% - 11px);
   }
 }
 
 @media (max-width: 767px) {
   .people-container:not(#pi-container) .person-card {
-    flex: 0 0 calc(50% - 8px);
-    max-width: calc(50% - 8px);
+    flex: 0 0 calc(33.33% - 8px);
+    max-width: calc(33.33% - 8px);
   }
 }
 

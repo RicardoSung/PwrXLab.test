@@ -1,38 +1,28 @@
-// ------- 名字 → 目录名、资源路径 -------
+// ------- 名字 -> 目录名、资源路径 -------
 function nameToFolder(name) {
-  // "Yan Lu" -> "Yan_Lu"
-  return name.trim().replace(/\s+/g, "_");
+  return name.trim().replace(/\s+/g, "_"); // "Yan Lu" -> "Yan_Lu"
 }
 
 function buildAssetsForPerson(name) {
   var folder = "../Resources/people/" + nameToFolder(name) + "/";
   return {
-    photoUrl: folder + "photo.jpg",   // for all photos, us photo.jpg as filename
-    introUrl: folder + "intro.txt"
+    photoUrl: folder + "photo.jpg",
+    introUrl: folder + "intro.txt",
+    pubUrl: folder + "pub.txt"
   };
 }
 
 // ------- 解析 people.txt -------
 
-/*
- 映射关系：
- Principal Investigator: -> pi
- Postdoc Researcher:     -> postdoc
- Graduate Students:          -> graduate
- Bachelor Intership & Visiting Scholar:     -> bachelor_visiting
- Alumni:                 -> alumni
-*/
-
 function parsePeopleText(text) {
   var lines = text.split(/\r?\n/);
-  var currentSection = null;
-
   var sectionMap = {
-    "Principal Investigator": "pi",
-    "Postdoc Researcher": "postdoc",
-    "Graduate Students": "graduate",
-    "Bachelor Intership & Visiting Scholar": "bachelor_visiting",
-    "Alumni": "alumni"
+    "principal investigator": "pi",
+    "postdoc researcher": "postdoc",
+    "graduate students": "graduate",
+    "bachelor intership & visiting scholar": "bachelor_visiting",
+    "alumni": "alumni"
+    // Staff 目前 people.html 没有对应 container，这里先不渲染
   };
 
   var data = {
@@ -43,22 +33,26 @@ function parsePeopleText(text) {
     alumni: []
   };
 
-  lines.forEach(function (rawLine) {
-    var line = rawLine.trim();
+  var currentSection = null;
+
+  lines.forEach(function (raw) {
+    var line = raw.trim();
     if (!line) return;
 
-    if (line.endsWith(":")) {
-      currentSection = line.slice(0, -1);
+    // 标题行，以冒号结尾，例如 "Principal Investigator:"
+    if (/:$/.test(line)) {
+      var key = line.replace(/:$/, "").trim().toLowerCase();
+      currentSection = key;
       return;
     }
 
+    // 普通姓名行
     if (currentSection) {
       var group = sectionMap[currentSection];
       if (!group) return;
-
       var person = {
         name: line,
-        role: currentSection
+        role: currentSection // 原始标题名
       };
       data[group].push(person);
     }
@@ -67,52 +61,7 @@ function parsePeopleText(text) {
   return data;
 }
 
-function parseIntroText(text) {
-  var result = {
-    position: "",
-    scholar: "",
-    email: "",
-    intro: ""
-  };
-
-  var lines = text.split(/\r?\n/);
-  var currentField = null;
-  var introLines = [];
-
-  lines.forEach(function (rawLine) {
-    var line = rawLine.trim();
-    if (!line) return;
-
-    if (/^Position:?$/i.test(line)) {
-      currentField = "position";
-      return;
-    }
-    if (/^(Google Scholar|Scholar):?$/i.test(line)) {
-      currentField = "scholar";
-      return;
-    }
-    if (/^(Email|E-mail):?$/i.test(line)) {
-      currentField = "email";
-      return;
-    }
-    if (/^Intro/i.test(line)) {  // Introduction / Introducton 都能匹配
-      currentField = "intro";
-      return;
-    }
-
-    if (currentField === "intro") {
-      // Intro 内容保留原始行
-      introLines.push(rawLine);
-    } else if (currentField && !result[currentField]) {
-      // position / scholar / email 只取第一次非空内容
-      result[currentField] = line;
-    }
-  });
-
-  result.intro = introLines.join("\n").trim();
-  return result;
-}
-
+// ------- 解析 intro.txt：增加 research interests 字段 -------
 function parseIntroText(text) {
   var result = {
     position: "",
@@ -120,26 +69,38 @@ function parseIntroText(text) {
     email: "",
     linkedin: "",
     website: "",
+    research: "",
     intro: ""
   };
 
   var lines = text.split(/\r?\n/);
   var currentField = null;
   var introLines = [];
+  var researchLines = [];
 
   lines.forEach(function (rawLine) {
     var line = rawLine.trim();
-    if (!line) return;
 
+    // 空行：只在正文里保留换行，其它字段直接跳过
+    if (!line) {
+      if (currentField === "intro") {
+        introLines.push(""); // 保留空行
+      } else if (currentField === "research") {
+        researchLines.push("");
+      }
+      return;
+    }
+
+    // 字段标题
     if (/^Position:?$/i.test(line)) {
       currentField = "position";
       return;
     }
-    if (/^(Google Scholar|Scholar):?$/i.test(line)) {
+    if (/^Google\s+Scholar:?$/i.test(line)) {
       currentField = "scholar";
       return;
     }
-    if (/^(Email|E-mail):?$/i.test(line)) {
+    if (/^Email:?$/i.test(line)) {
       currentField = "email";
       return;
     }
@@ -147,114 +108,50 @@ function parseIntroText(text) {
       currentField = "linkedin";
       return;
     }
-    if (/^(Website|Homepage|Personal Website):?$/i.test(line)) {
+    if (/^Website:?$/i.test(line)) {
       currentField = "website";
       return;
     }
-    if (/^Intro/i.test(line)) {   // Introduction / Intro 都能匹配
+    if (/^Research\s+Interests?:?$/i.test(line)) {
+      currentField = "research";
+      return;
+    }
+    // Introducton / Introduction / Intro 都识别
+    if (/^Intro/i.test(line)) {
       currentField = "intro";
       return;
     }
 
+    // 根据当前字段写入内容
     if (currentField === "intro") {
-      introLines.push(rawLine);   // Intro 部分保留原始行
-    } else if (currentField && !result[currentField]) {
-      // 非 Intro 字段只取第一行
+      introLines.push(line);
+      return;
+    }
+    if (currentField === "research") {
+      researchLines.push(line);
+      return;
+    }
+
+    // 单行字段（Position / Email / Website / LinkedIn / Scholar）
+    if (currentField && !result[currentField]) {
       result[currentField] = line;
     }
   });
 
   result.intro = introLines.join("\n").trim();
+  result.research = researchLines.join("\n").trim();
+
   return result;
 }
-
-// ------- 为每个人加载 intro.txt -------
-function loadIntroForPerson(person) {
-  var assets = buildAssetsForPerson(person.name);
-  person.photoUrl = assets.photoUrl;
-
-  return fetch(assets.introUrl)
-    .then(function (res) {
-      if (!res.ok) {
-        person.intro = "";
-        person.position = "";
-        person.scholar = "";
-        person.email = "";
-        person.linkedin = "";
-        person.website = "";
-        return;
-      }
-      return res.text().then(function (txt) {
-        var parsed = parseIntroText(txt);
-        person.intro = parsed.intro;
-        person.position = parsed.position;
-        person.scholar = parsed.scholar;
-        person.email = parsed.email;
-        person.linkedin = parsed.linkedin;
-        person.website = parsed.website;
-      });
-    })
-    .catch(function () {
-      person.intro = "";
-      person.position = "";
-      person.scholar = "";
-      person.email = "";
-      person.linkedin = "";
-      person.website = "";
-    });
-}
+// ------- 联系方式图标行（Email / Scholar / Website / LinkedIn） -------
 
 function createLinksRow(person) {
-  var hasScholar = !!person.scholar;
   var hasEmail = !!person.email;
-
-  if (!hasScholar && !hasEmail) {
-    return null;
-  }
-
-  var container = document.createElement("div");
-  container.className = "person-links";
-
-  if (hasEmail) {
-    var aMail = document.createElement("a");
-    aMail.className = "icon-link";
-    aMail.href = "mailto:" + person.email;
-
-    var imgMail = document.createElement("img");
-    imgMail.src = "../Resources/icons/email.svg"; // 如果你用 png，这里改成 .png
-    imgMail.alt = "Email";
-    imgMail.className = "icon-image";
-
-    aMail.appendChild(imgMail);
-    container.appendChild(aMail);
-  }
-
-  if (hasScholar) {
-    var aSch = document.createElement("a");
-    aSch.className = "icon-link";
-    aSch.href = person.scholar;
-    aSch.target = "_blank";
-    aSch.rel = "noopener";
-
-    var imgSch = document.createElement("img");
-    imgSch.src = "../Resources/icons/scholar.svg"; // 同上
-    imgSch.alt = "Google Scholar";
-    imgSch.className = "icon-image";
-
-    aSch.appendChild(imgSch);
-    container.appendChild(aSch);
-  }
-
-  return container;
-}
-
-function createLinksRow(person) {
-  var hasScholar  = !!person.scholar;
-  var hasEmail    = !!person.email;
+  var hasScholar = !!person.scholar;
+  var hasWebsite = !!person.website;
   var hasLinkedin = !!person.linkedin;
-  var hasWebsite  = !!person.website;
 
-  if (!hasScholar && !hasEmail && !hasLinkedin && !hasWebsite) {
+  if (!hasEmail && !hasScholar && !hasWebsite && !hasLinkedin) {
     return null;
   }
 
@@ -267,7 +164,7 @@ function createLinksRow(person) {
     aMail.href = "mailto:" + person.email;
 
     var imgMail = document.createElement("img");
-    imgMail.src = "../Resources/icons/email.svg";   // 自己准备图标
+    imgMail.src = "../Resources/icons/email.svg";
     imgMail.alt = "Email";
     imgMail.className = "icon-image";
 
@@ -291,22 +188,6 @@ function createLinksRow(person) {
     container.appendChild(aSch);
   }
 
-  if (hasLinkedin) {
-    var aLi = document.createElement("a");
-    aLi.className = "icon-link";
-    aLi.href = person.linkedin;
-    aLi.target = "_blank";
-    aLi.rel = "noopener";
-
-    var imgLi = document.createElement("img");
-    imgLi.src = "../Resources/icons/linkedin.svg";
-    imgLi.alt = "LinkedIn";
-    imgLi.className = "icon-image";
-
-    aLi.appendChild(imgLi);
-    container.appendChild(aLi);
-  }
-
   if (hasWebsite) {
     var aWeb = document.createElement("a");
     aWeb.className = "icon-link";
@@ -315,7 +196,7 @@ function createLinksRow(person) {
     aWeb.rel = "noopener";
 
     var imgWeb = document.createElement("img");
-    imgWeb.src = "../Resources/icons/website.svg";    // 可以是地球图标
+    imgWeb.src = "../Resources/icons/website.svg";
     imgWeb.alt = "Website";
     imgWeb.className = "icon-image";
 
@@ -323,20 +204,421 @@ function createLinksRow(person) {
     container.appendChild(aWeb);
   }
 
+  if (hasLinkedin) {
+    var aLn = document.createElement("a");
+    aLn.className = "icon-link";
+    aLn.href = person.linkedin;
+    aLn.target = "_blank";
+    aLn.rel = "noopener";
+
+    var imgLn = document.createElement("img");
+    imgLn.src = "../Resources/icons/linkedin.svg";
+    imgLn.alt = "LinkedIn";
+    imgLn.className = "icon-image";
+
+    aLn.appendChild(imgLn);
+    container.appendChild(aLn);
+  }
+
   return container;
 }
 
+// ------- 抽屉：只允许同时打开一个 -------
+
+var currentDrawerEl = null;
+var currentDrawerCard = null;
+var currentDrawerPerson = null;
+
+function closeCurrentDrawer() {
+  if (currentDrawerEl && currentDrawerEl.parentNode) {
+    currentDrawerEl.parentNode.removeChild(currentDrawerEl);
+  }
+  if (currentDrawerCard) {
+    currentDrawerCard.classList.remove("is-open");
+  }
+  currentDrawerEl = null;
+  currentDrawerCard = null;
+  currentDrawerPerson = null;
+}
+
+// 简单 BibTeX 解析 + 分类 + HTML 渲染
+function pubTextToHtml(raw) {
+  if (!raw || !raw.trim()) {
+    return "<em>No publications available.</em>";
+  }
+
+  // 去掉 BOM
+  raw = raw.replace(/^\uFEFF/, "");
+
+  // 解析 BibTeX
+  var entries = [];
+  var entryRegex = /@(\w+)\s*\{([^,]+),([\s\S]*?)\}\s*(?=@|$)/g;
+  var match;
+  while ((match = entryRegex.exec(raw)) !== null) {
+    var bibType = match[1].toLowerCase();
+    var key = match[2].trim();
+    var body = match[3];
+
+    var fields = {};
+    var fieldRegex = /(\w+)\s*=\s*\{([^}]*)\}/g;
+    var fmatch;
+    while ((fmatch = fieldRegex.exec(body)) !== null) {
+      var fieldName = fmatch[1].toLowerCase();
+      var value = fmatch[2].trim();
+      // 去掉常见转义
+      value = value.replace(/\\&/g, "&").replace(/\\_/g, "_");
+      fields[fieldName] = value;
+    }
+
+    entries.push({
+      bibType: bibType,
+      key: key,
+      fields: fields,
+    });
+  }
+
+  // 如果解析失败，退回到原来的“纯文本 + DOI 链接”
+  if (!entries.length) {
+    return simplePubTextFallback(raw);
+  }
+
+  // 分类：journal / conference / book
+  function classifyEntry(e) {
+    var f = e.fields;
+    var t = (f.type || "").toLowerCase();
+    var bt = (e.bibType || "").toLowerCase();
+    var hasJournal = !!f.journal;
+    var hasBooktitle = !!f.booktitle;
+    var hasPublisher = !!f.publisher;
+
+    // Books
+    if (
+      t.indexOf("book") !== -1 ||
+      t.indexOf("chapter") !== -1 ||
+      bt === "book" ||
+      bt === "inbook" ||
+      bt === "incollection"
+    ) {
+      return "book";
+    }
+
+    // Journal
+    if (
+      t.indexOf("journal") !== -1 ||
+      (bt === "article" && hasJournal)
+    ) {
+      return "journal";
+    }
+
+    // 其它默认归到 conference（包括 conference paper 等）
+    return "conf";
+  }
+
+  // 排序：按年份降序
+  entries.sort(function (a, b) {
+    var ya = parseInt(a.fields.year || "0", 10) || 0;
+    var yb = parseInt(b.fields.year || "0", 10) || 0;
+    return yb - ya;
+  });
+
+  var groups = { journal: [], conf: [], book: [] };
+  entries.forEach(function (e) {
+    var cat = classifyEntry(e);
+    if (!groups[cat]) groups[cat] = [];
+    groups[cat].push(e);
+  });
+
+  function escapeHtml(str) {
+    return String(str || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function escapeAttr(str) {
+    return escapeHtml(str).replace(/"/g, "&quot;");
+  }
+
+  // 单条 entry 的展示格式，尽量靠 publication 页风格
+  function formatEntry(e) {
+    var f = e.fields;
+    var authors = f.author || f.authors || "";
+    var title = f.title || "";
+    var venue = f.journal || f.booktitle || f.publisher || "";
+    var year = f.year || "";
+    var pages = f.pages || "";
+    var citation = f.citation || f.url || "";
+    var note = f.note || "";
+
+    var parts = [];
+
+    if (authors) {
+      parts.push(
+        '<span class="pub-authors">' +
+          escapeHtml(authors) +
+          ".</span>"
+      );
+    }
+
+    if (title) {
+      parts.push(
+        '<span class="pub-title">' +
+          escapeHtml(title) +
+          ".</span>"
+      );
+    }
+
+    if (venue || year) {
+      var venueStr = venue ? escapeHtml(venue) : "";
+      if (year) {
+        venueStr = venueStr ? venueStr + ", " + escapeHtml(year) : escapeHtml(year);
+      }
+      if (pages) {
+        venueStr += ", " + escapeHtml(pages);
+      }
+      if (venueStr) {
+        parts.push(
+          '<span class="pub-venue">' + venueStr + ".</span>"
+        );
+      }
+    }
+
+    if (citation) {
+      parts.push(
+        '<a class="pub-link" href="' +
+          escapeAttr(citation) +
+          '" target="_blank" rel="noopener noreferrer">Link</a>'
+      );
+    } else {
+      // 从 note 中抓 DOI 链接
+      var doiMatch = /10\.\d{4,9}\/\S*/.exec(note);
+      if (doiMatch) {
+        var doi = doiMatch[0];
+        var url = "https://doi.org/" + doi;
+        parts.push(
+          '<a class="pub-link" href="' +
+            escapeAttr(url) +
+            '" target="_blank" rel="noopener noreferrer">DOI</a>'
+        );
+      }
+    }
+
+    return parts.join(" ");
+  }
+
+  function renderGroup(title, list) {
+    if (!list || !list.length) return "";
+    var html = "";
+    html += '<section class="person-pub-section">';
+    html +=
+      '<h4 class="section-title">' + escapeHtml(title) + "</h4>";
+    html += '<ol class="pub-list">';
+    list.forEach(function (e) {
+      html += '<li class="pub-item">';
+      html += formatEntry(e);
+      html += "</li>";
+    });
+    html += "</ol>";
+    html += "</section>";
+    return html;
+  }
+
+  var htmlParts = [];
+  htmlParts.push(renderGroup("Journal Articles", groups.journal));
+  htmlParts.push(renderGroup("Conference Papers", groups.conf));
+  htmlParts.push(renderGroup("Books", groups.book));
+
+  var finalHtml = htmlParts.join("");
+
+  if (!finalHtml.trim()) {
+    // 如果解析后啥都没渲染出来，就退回纯文本模式
+    return simplePubTextFallback(raw);
+  }
+  return finalHtml;
+}
+
+// 旧逻辑：纯文本 + DOI 自动链接的兜底方案
+function simplePubTextFallback(raw) {
+  var escaped = raw
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+  var doiRegex = /\b(10\.\d{4,9}\/\S*?)([)\].,;:]?)(?=\s|$)/g;
+  var linked = escaped.replace(doiRegex, function (_, doi, punct) {
+    var clean = doi
+      .trim()
+      .replace(/^https?:\/\/(dx\.)?doi\.org\//i, "");
+    var url = "https://doi.org/" + clean;
+    return (
+      '<a href="' +
+      url +
+      '" target="_blank" rel="noopener noreferrer">' +
+      clean +
+      "</a>" +
+      (punct || "")
+    );
+  });
+
+  return linked.replace(/\r?\n/g, "<br/>");
+}
+
+// 打开某个人的抽屉（点击头像触发）
+function openDrawerForPerson(person, card) {
+  // 再次点击同一个，关闭
+  if (currentDrawerCard === card) {
+    closeCurrentDrawer();
+    return;
+  }
+
+  // 先关闭之前的
+  closeCurrentDrawer();
+
+  card.classList.add("is-open");
+  currentDrawerCard = card;
+  currentDrawerPerson = person;
+
+  var drawer = document.createElement("div");
+  drawer.className = "person-drawer";
+
+  var inner = document.createElement("div");
+  inner.className = "person-drawer-inner";
+
+  // 头部：名字 + 职位
+  var header = document.createElement("div");
+  header.className = "person-drawer-header";
+
+  // 左侧：头像
+  var avatarWrap = document.createElement("div");
+  avatarWrap.className = "person-drawer-avatar-wrap";
+
+  var avatar = document.createElement("img");
+  avatar.className = "person-drawer-avatar";
+  avatar.src = person.photoUrl;
+  avatar.alt = person.name;
+  avatar.onerror = function () {
+    this.style.display = "none";
+  };
+  avatarWrap.appendChild(avatar);
+
+  // 右侧：姓名 + 职位
+  var textBox = document.createElement("div");
+  textBox.className = "person-drawer-header-text";
+
+  var titleEl = document.createElement("h3");
+  titleEl.className = "person-drawer-title";
+  titleEl.textContent = person.name;
+  textBox.appendChild(titleEl);
+
+  if (person.position) {
+    var posEl = document.createElement("p");
+    posEl.className = "person-drawer-position";
+    posEl.textContent = person.position;
+    textBox.appendChild(posEl);
+  }
+
+  header.appendChild(avatarWrap);
+  header.appendChild(textBox);
+
+  inner.appendChild(header);
+
+  // Research Interests
+  if (person.research) {
+    var sec1 = document.createElement("div");
+    sec1.className = "person-drawer-section";
+
+    var secTitle1 = document.createElement("div");
+    secTitle1.className = "person-drawer-section-title";
+    secTitle1.textContent = "Research Interests";
+    sec1.appendChild(secTitle1);
+
+    var secText1 = document.createElement("div");
+    secText1.className = "person-drawer-text";
+    secText1.textContent = person.research;
+    sec1.appendChild(secText1);
+
+    inner.appendChild(sec1);
+  }
+
+  // 简介
+  if (person.intro) {
+    var sec2 = document.createElement("div");
+    sec2.className = "person-drawer-section";
+
+    var secTitle2 = document.createElement("div");
+    secTitle2.className = "person-drawer-section-title";
+    secTitle2.textContent = "Introduction";
+    sec2.appendChild(secTitle2);
+
+    var secText2 = document.createElement("div");
+    secText2.className = "person-drawer-text";
+    secText2.textContent = person.intro;
+    sec2.appendChild(secText2);
+
+    inner.appendChild(sec2);
+  }
+
+  // Publications：读取个人目录 pub.txt
+  var sec3 = document.createElement("div");
+  sec3.className = "person-drawer-section";
+
+  var secTitle3 = document.createElement("div");
+  secTitle3.className = "person-drawer-section-title";
+  secTitle3.textContent = "Publications";
+  sec3.appendChild(secTitle3);
+
+  var pubsBody = document.createElement("div");
+  pubsBody.className = "person-drawer-pubs";
+  pubsBody.textContent = "Loading publications…";
+  sec3.appendChild(pubsBody);
+
+  inner.appendChild(sec3);
+
+  drawer.appendChild(inner);
+
+  // 插在当前卡片后面（一行中下一项，宽度 100%）
+  var parent = card.parentNode;
+  parent.insertBefore(drawer, card.nextSibling);
+
+  currentDrawerEl = drawer;
+
+  // 延迟加载 pub.txt，并缓存
+  if (person._pubLoaded && person._pubHtml != null) {
+    pubsBody.innerHTML = person._pubHtml;
+  } else if (person.pubUrl) {
+    fetch(person.pubUrl)
+      .then(function (res) {
+        if (!res.ok) {
+          throw new Error("HTTP " + res.status);
+        }
+        return res.text();
+      })
+      .then(function (txt) {
+        var html = pubTextToHtml(txt);
+        person._pubLoaded = true;
+        person._pubHtml = html;
+        pubsBody.innerHTML = html;
+      })
+      .catch(function () {
+        pubsBody.textContent = "Failed to load publications.";
+      });
+  } else {
+    pubsBody.innerHTML = "<em>No publications file.</em>";
+  }
+}
+
+// ------- 卡片渲染：PI 与 非 PI -------
+
 function createPersonCard(person) {
-  // 判断是不是 PI：依赖 people.text 解析时的 role 字段
-  // 你的 parsePeopleText 一般把 PI 的 section 写成 "Principal Investigator"
-  var isPI = person.role && person.role.indexOf("Principal Investigator") === 0;
+  var isPI =
+    person.role &&
+    person.role.toLowerCase().indexOf("principal investigator") === 0;
 
   if (isPI) {
-    // ================== PI：左图右文 ==================
+    // PI：左图右文
     var card = document.createElement("div");
     card.className = "person-card pi-card";
 
-    // 左边图片区域
     var imgWrap = document.createElement("div");
     imgWrap.className = "pi-photo-wrap";
 
@@ -349,53 +631,50 @@ function createPersonCard(person) {
     };
     imgWrap.appendChild(img);
 
-    // 右边文字区域
     var info = document.createElement("div");
     info.className = "pi-info";
 
-    // 名字
+    var headerLine = document.createElement("div");
+    headerLine.className = "person-header-line";
+
     var nameEl = document.createElement("div");
     nameEl.className = "person-name";
     nameEl.textContent = person.name;
-
-    // 职位
-    var positionEl = document.createElement("div");
-    positionEl.className = "person-position";
-    positionEl.textContent = person.position || "";
-
-    // 图标行（Email / Scholar / LinkedIn / Website）
-    var linksRow = createLinksRow(person);
-
-    // 头行：名字 + 图标在一行
-    var headerLine = document.createElement("div");
-    headerLine.className = "person-header-line";
     headerLine.appendChild(nameEl);
-    if (linksRow) headerLine.appendChild(linksRow);
 
-    // 简介
-    var intro = document.createElement("div");
-    intro.className = "person-intro";
-    intro.textContent = person.intro || "";
+    var linksRow = createLinksRow(person);
+    if (linksRow) {
+      headerLine.appendChild(linksRow);
+    }
 
-    // 组装右侧信息：有就加
     info.appendChild(headerLine);
+
     if (person.position) {
+      var positionEl = document.createElement("div");
+      positionEl.className = "person-position";
+      positionEl.textContent = person.position;
       info.appendChild(positionEl);
     }
+
     if (person.intro) {
-      info.appendChild(intro);
+      var introEl = document.createElement("div");
+      introEl.className = "person-intro";
+      introEl.textContent = person.intro;
+      info.appendChild(introEl);
     }
 
-    // 组装整个卡片
     card.appendChild(imgWrap);
     card.appendChild(info);
 
     return card;
-
   } else {
-    // ================== 其他人：上图下文 ==================
+    // 非 PI：上图下文 + 点击头像展开抽屉
     var card2 = document.createElement("div");
     card2.className = "person-card";
+
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "person-photo-button";
 
     var img2 = document.createElement("img");
     img2.className = "person-photo";
@@ -405,86 +684,153 @@ function createPersonCard(person) {
       this.style.display = "none";
     };
 
-    var nameEl2 = document.createElement("div");
-    nameEl2.className = "person-name";
-    nameEl2.textContent = person.name;
+    btn.appendChild(img2);
+    card2.appendChild(btn);
+
+    var basic = document.createElement("div");
+    basic.className = "person-basic";
 
     var positionEl2 = document.createElement("div");
     positionEl2.className = "person-position";
     positionEl2.textContent = person.position || "";
+    basic.appendChild(positionEl2);
+
+    var nameEl2 = document.createElement("div");
+    nameEl2.className = "person-name";
+    nameEl2.textContent = person.name;
+    basic.appendChild(nameEl2);
 
     var linksRow2 = createLinksRow(person);
-
-    var intro2 = document.createElement("div");
-    intro2.className = "person-intro";
-    intro2.textContent = person.intro || "";
-
-    // 头行：名字 + 图标在一行
-    var headerLine2 = document.createElement("div");
-    headerLine2.className = "person-header-line";
-    headerLine2.appendChild(nameEl2);
-    if (linksRow2) headerLine2.appendChild(linksRow2);
-
-    card2.appendChild(img2);
-    card2.appendChild(headerLine2);
-    if (person.position) {
-      card2.appendChild(positionEl2);
+    if (linksRow2) {
+      basic.appendChild(linksRow2);
     }
-    if (person.intro) {
-      card2.appendChild(intro2);
-    }
+
+    card2.appendChild(basic);
+
+    // 只在点击头像时打开/关闭抽屉
+    btn.addEventListener("click", function (e) {
+      e.preventDefault();
+      openDrawerForPerson(person, card2);
+    });
 
     return card2;
   }
 }
 
+// ------- 加载 intro.txt -------
+
+function loadIntroForPerson(person) {
+  var assets = buildAssetsForPerson(person.name);
+  person.photoUrl = assets.photoUrl;
+  person.pubUrl = assets.pubUrl;
+
+  return fetch(assets.introUrl)
+    .then(function (res) {
+      if (!res.ok) {
+        person.intro = "";
+        person.position = "";
+        person.scholar = "";
+        person.email = "";
+        person.linkedin = "";
+        person.website = "";
+        person.research = "";
+        return;
+      }
+      return res.text().then(function (txt) {
+        var parsed = parseIntroText(txt);
+        person.intro = parsed.intro;
+        person.position = parsed.position;
+        person.scholar = parsed.scholar;
+        person.email = parsed.email;
+        person.linkedin = parsed.linkedin;
+        person.website = parsed.website;
+        person.research = parsed.research;
+      });
+    })
+    .catch(function () {
+      person.intro = "";
+      person.position = "";
+      person.scholar = "";
+      person.email = "";
+      person.linkedin = "";
+      person.website = "";
+      person.research = "";
+    });
+}
+
 // ------- 渲染到页面 -------
+
 function renderPeople(data) {
-  var piContainer       = document.getElementById("pi-container");
-  var postdocContainer  = document.getElementById("postdoc-container");
+  var piContainer = document.getElementById("pi-container");
+  var postdocContainer = document.getElementById("postdoc-container");
   var graduateContainer = document.getElementById("graduate-container");
-  var bachelor_visitingContainer = document.getElementById("bachelor_visiting-container");
-  var alumniContainer   = document.getElementById("alumni-container");
+  var bachelorVisitingContainer = document.getElementById(
+    "bachelor_visiting-container"
+  );
+  var alumniContainer = document.getElementById("alumni-container");
+
+  [piContainer, postdocContainer, graduateContainer, bachelorVisitingContainer, alumniContainer].forEach(
+    function (c) {
+      if (c) c.innerHTML = "";
+    }
+  );
 
   function sortByName(list) {
-    return list.sort(function (a, b) {
+    return list.slice().sort(function (a, b) {
       return a.name.localeCompare(b.name);
     });
   }
 
-  data.pi.forEach(function (p)       { piContainer.appendChild(createPersonCard(p)); });
-  data.postdoc.forEach(function (p)  { postdocContainer.appendChild(createPersonCard(p)); });
-  data.graduate.forEach(function (p)      { graduateContainer.appendChild(createPersonCard(p)); });
-  data.bachelor_visiting.forEach(function (p) { bachelor_visitingContainer.appendChild(createPersonCard(p)); });
-  data.alumni.forEach(function (p)   { alumniContainer.appendChild(createPersonCard(p)); });
+  // PI 一般只有一个，保持顺序
+  data.pi.forEach(function (p) {
+    piContainer.appendChild(createPersonCard(p));
+  });
+
+  sortByName(data.postdoc).forEach(function (p) {
+    postdocContainer.appendChild(createPersonCard(p));
+  });
+
+  sortByName(data.graduate).forEach(function (p) {
+    graduateContainer.appendChild(createPersonCard(p));
+  });
+
+  sortByName(data.bachelor_visiting).forEach(function (p) {
+    bachelorVisitingContainer.appendChild(createPersonCard(p));
+  });
+
+  sortByName(data.alumni).forEach(function (p) {
+    alumniContainer.appendChild(createPersonCard(p));
+  });
 }
 
-// ------- 主流程 -------
+// ------- 总入口：加载 people.txt -------
+
 function loadPeople() {
   fetch("../Resources/people/people.txt")
     .then(function (res) {
+      if (!res.ok) {
+        throw new Error("HTTP " + res.status);
+      }
       return res.text();
     })
-    .then(function (text) {
-      var parsed = parsePeopleText(text);
+    .then(function (txt) {
+      var parsed = parsePeopleText(txt);
 
       var allPersons = []
-        .concat(parsed.pi)
-        .concat(parsed.postdoc)
-        .concat(parsed.graduate)
-        .concat(parsed.bachelor_visiting)
-        .concat(parsed.alumni);
+        .concat(
+          parsed.pi,
+          parsed.postdoc,
+          parsed.graduate,
+          parsed.bachelor_visiting,
+          parsed.alumni
+        );
 
-      var promises = allPersons.map(function (p) {
-        return loadIntroForPerson(p);
-      });
-
-      return Promise.all(promises).then(function () {
+      return Promise.all(allPersons.map(loadIntroForPerson)).then(function () {
         renderPeople(parsed);
       });
     })
     .catch(function (err) {
-      console.error("Failed to load people.text:", err);
+      console.error("Failed to load people.txt:", err);
     });
 }
 
