@@ -1,0 +1,34 @@
+@inproceedings{song2020optimization,
+  title={Optimization of CNN-based garbage classification model},
+  author={Song, Fei and Zhang, Ying and Zhang, Jing},
+  booktitle={Proceedings of the 4th international conference on computer science and application engineering},
+  pages={1--5},
+  year={2020}
+}
+
+@inproceedings{song202585,
+  title={An 85-to-230V AC to 3.3-to-4.6 VDc 1.52 W Capacitor-Drop Sigma-Floating-SC AC-DC Converter with 81.3\% Peak Efficiency},
+  author={Song, Fei and Han, Shousheng and Martins, Rui P and Lu, Yan},
+  booktitle={2025 IEEE International Solid-State Circuits Conference (ISSCC)},
+  volume={68},
+  pages={1--3},
+  year={2025},
+  organization={IEEE}
+}
+
+@inproceedings{han2025lego,
+  title={A LEGO-Like Easy-Stacking Step-Up SC Converter with Ultra-High and Wide VCR Using All Input-Stress-Only Devices},
+  author={Han, Shousheng and Song, Fei and Zhu, Zhongyao and Wu, Xiaoming and Jiang, Hanjun and Ren, Tianling and Lu, Yan},
+  booktitle={2025 IEEE Custom Integrated Circuits Conference (CICC)},
+  pages={1--3},
+  year={2025},
+  organization={IEEE}
+}
+
+@article{song20251,
+  title={A 1.52-W Capacitor-Drop Sigma-Floating-SC AC/DC Converter for Grid Power to IoT Devices},
+  author={Song, Fei and Han, Shousheng and Martins, Rui P and Lu, Yan},
+  journal={IEEE Journal of Solid-State Circuits},
+  year={2025},
+  publisher={IEEE}
+}

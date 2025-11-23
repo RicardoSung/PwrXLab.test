@@ -1,0 +1,21 @@
+Position:
+Principal Investigator
+
+Google Scholar:
+https://scholar.google.com/citations?user=BSLKtEAAAAAJ&hl=en
+
+Email:
+yanlu@tsinghua.edu.cn
+
+Website:
+https://web.ee.tsinghua.edu.cn/luyan/en
+
+LinkedIn:
+https://www.linkedin.com/in/yan-lu-697baa2b/
+
+Introducton:
+Yan Lu (Senior Member, IEEE) received the B.Eng. and M.Sc. degrees in microelectronics from the South China University of Technology, Guangzhou, China, in 2006 and 2009, respectively, and the Ph.D. degree in electronic and computer engineering from The Hong Kong University of Science and Technology (HKUST), Hong Kong, China, in 2013.
+
+From 2014 to 2024, he was with the State Key Laboratory of Analog and Mixed-Signal VLSI, University of Macau, Macau, China. On July 1st, 2024, He joined the Department of Electronic Engineering, Tsinghua University, Beijing, China, as a Full Professor with the endowed Xing-Hua Chair Professorship. He has authored/coauthored 200+ peer-reviewed technical articles and three books. His research interests include high-density power converters, integrated voltage regulators, wireless power transfer and energy-harvesting circuits and systems. 
+
+Dr. Lu has served as an ITPC Member (2020-2024) for ISSCC, as a TPC Member (2019-2022) and then the Power Management Subcommittee Chair (2023-2024) for CICC, an IEEE SSCS Distinguished Lecturer (2022–2023) and an IEEE CAS Society Distinguished Lecturer (2025–2026). He has served as a Guest Editor for the IEEE JSSC in 2022, 2023 and 2024, for the IEEE TCAS-I in 2019, and for the IEEE TCAS-II in 2018 and 2019. He is an Associate Editor for the Journal of Semiconductors and the IEEE Journal of the Electron Devices Society. He was a recipient/corecipient of the IEEE Solid-State Circuits Society Pre-Doctoral Achievement Award (2013–2014), the IEEE CAS Society Outstanding Young Author Award in 2017, and the ISSCC 2017 Takuo Sugano Award for Outstanding Far-East Paper. 

@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- 由 Microsoft Visio, SVG Export 生成 The Power X Lab logo 202511.svg Page-1 -->
+
+<svg
+   width="2.451649in"
+   height="0.52066839in"
+   viewBox="0 0 176.51877 37.488178"
+   xml:space="preserve"
+   color-interpolation-filters="sRGB"
+   class="st15"
+   version="1.1"
+   id="svg79"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/"><defs
+   id="defs79" />
+	<v:documentProperties
+   v:langID="1033"
+   v:metric="true"
+   v:viewMarkup="false">
+		<v:userDefs>
+			<v:ud
+   v:nameU="msvSubprocessMaster"
+   v:prompt=""
+   v:val="VT4(Multi proc/doc)" />
+			<v:ud
+   v:nameU="msvNoAutoConnect"
+   v:val="VT0(0):26" />
+		</v:userDefs>
+	</v:documentProperties>
+
+	<style
+   type="text/css"
+   id="style1">
+	<![CDATA[
+		.st1 {fill:none;stroke:none;stroke-width:1.5}
+		.st2 {fill:#ffffff;font-family:Arial Black;font-size:1.16666em;font-weight:bold}
+		.st3 {fill:#4672c4;font-size:1em}
+		.st4 {fill:#4672c4;font-size:1.71429em}
+		.st5 {fill:none;stroke:none;stroke-width:0.25}
+		.st6 {fill:#a50021;font-family:Arial Narrow;font-size:0.916672em;font-style:italic;font-weight:bold}
+		.st7 {stroke:#4672c4;stroke-width:2.25}
+		.st8 {stroke:#4672c4;stroke-linecap:butt;stroke-width:2.25}
+		.st9 {fill:#4672c4;font-family:Arial Black;font-size:1.16666em;font-weight:bold}
+		.st10 {stroke:#4672c4;stroke-linecap:butt;stroke-width:3}
+		.st11 {stroke:#4672c4;stroke-width:3}
+		.st12 {fill:#a50021;font-family:Arial Narrow;font-size:0.75em;font-style:italic;font-weight:bold}
+		.st13 {fill:#4672c4;font-family:Arial Narrow;font-size:0.75em;font-style:italic;font-weight:bold}
+		.st14 {fill:none;stroke:#4672c4;stroke-width:3}
+		.st15 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
+	]]>
+	</style>
+
+	
+<rect
+   x="-0.00037968854"
+   y="-2.1725997e-05"
+   width="155.90601"
+   height="28.3465"
+   class="st1"
+   id="rect28-9-7"
+   style="fill:none;stroke:none;stroke-width:1.5" /><text
+   x="89.818558"
+   y="21.377024"
+   class="st2"
+   v:langID="1033"
+   id="text32-9-8-9"
+   style="font-weight:bold;font-size:24px;font-family:'Arial Black';fill:#ffffff"><v:paragraph
+   v:horizAlign="1" /><v:tabList />X</text><text
+   x="49.058674"
+   y="21.377024"
+   class="st2"
+   v:langID="1033"
+   id="text32-9-7-3"
+   style="font-weight:bold;font-size:24px;font-family:'Arial Black';fill:#ffffff"><v:paragraph
+   v:horizAlign="1" /><v:tabList />P</text><g
+   id="shape151-74-6-3"
+   v:mID="151"
+   v:groupContext="shape"
+   transform="translate(-3.9252546e-4,-804.45588)">
+			<title
+   id="title32-5-8">工作表.151</title>
+			<desc
+   id="desc32-7-5">Power Everything with Integrated Circuits</desc>
+			<v:textBlock
+   v:margins="rect(2,2,2,2)"
+   v:tabSpace="42.5197" />
+			<v:textRect
+   cx="77.9528"
+   cy="837.346"
+   width="155.91"
+   height="9.08744" />
+			<rect
+   x="0"
+   y="832.802"
+   width="155.90601"
+   height="9.0874395"
+   class="st5"
+   id="rect32-6-8"
+   style="fill:none;stroke:none;stroke-width:0.25" />
+			<text
+   x="7.5"
+   y="840.04999"
+   class="st12"
+   v:langID="1033"
+   id="text34-2-9"
+   style="font-style:italic;font-weight:bold;font-size:9px;font-family:'Arial Narrow';fill:#a50021"><v:paragraph
+     v:horizAlign="2" /><v:tabList /><tspan
+     style="fill:#ffffff;fill-opacity:1"
+     id="tspan81">Power Everything with Integrated Circuits</tspan></text>		</g><g
+   id="group152-79-3-4"
+   transform="translate(164.7636,-806.45668)"
+   v:mID="152"
+   v:groupContext="group"
+   style="stroke:#ffffff;stroke-opacity:1">
+			<title
+   id="title34-9-2">GND.152</title>
+			<g
+   id="shape153-80-9-3"
+   v:mID="153"
+   v:groupContext="shape"
+   transform="translate(5.31496,-5.66929)"
+   style="stroke:#ffffff;stroke-opacity:1">
+				<title
+   id="title35-9-3">工作表.153</title>
+				<path
+   d="m 0,833.39 v 8.5"
+   class="st7"
+   id="path35-1-7"
+   style="stroke:#ffffff;stroke-width:2.25;stroke-opacity:1" />
+			</g>
+			<g
+   id="shape154-83-7-0"
+   v:mID="154"
+   v:groupContext="shape"
+   transform="translate(0,-5.66929)"
+   style="stroke:#ffffff;stroke-opacity:1">
+				<title
+   id="title36-2-0">工作表.154</title>
+				<path
+   d="M 0,841.89 H 10.63"
+   class="st7"
+   id="path36-3-1"
+   style="stroke:#ffffff;stroke-width:2.25;stroke-opacity:1" />
+			</g>
+			<g
+   id="shape155-86-6-0"
+   v:mID="155"
+   v:groupContext="shape"
+   transform="translate(2.65748,-2.83465)"
+   style="stroke:#ffffff;stroke-opacity:1">
+				<title
+   id="title37-5-3">工作表.155</title>
+				<path
+   d="M 0,841.89 H 5.31"
+   class="st7"
+   id="path37-5-0"
+   style="stroke:#ffffff;stroke-width:2.25;stroke-opacity:1" />
+			</g>
+			<g
+   id="shape156-89-8-0"
+   v:mID="156"
+   v:groupContext="shape"
+   transform="translate(3.98622)"
+   style="stroke:#ffffff;stroke-opacity:1">
+				<title
+   id="title38-1-3">工作表.156</title>
+				<path
+   d="M 0,841.89 H 2.66"
+   class="st7"
+   id="path38-4-8"
+   style="stroke:#ffffff;stroke-width:2.25;stroke-opacity:1" />
+			</g>
+			<g
+   id="shape157-92-7-3"
+   v:mID="157"
+   v:groupContext="shape"
+   transform="matrix(0,-1,-1,0,847.205,836.22)"
+   style="stroke:#ffffff;stroke-opacity:1">
+				<title
+   id="title39-1-6">工作表.157</title>
+				<path
+   d="M 0,841.89 H 8.5"
+   class="st8"
+   id="path39-3-0"
+   style="stroke:#ffffff;stroke-width:2.25;stroke-linecap:butt;stroke-opacity:1" />
+			</g>
+		</g><g
+   id="group158-95-8-4"
+   transform="rotate(-90,-323.50423,351.85115)"
+   v:mID="158"
+   v:groupContext="group"
+   style="stroke:#ffffff;stroke-opacity:1">
+			<title
+   id="title40-4-0">C.158</title>
+			<g
+   id="shape159-96-8-9"
+   v:mID="159"
+   v:groupContext="shape"
+   transform="translate(0,-12.189)"
+   style="stroke:#ffffff;stroke-opacity:1">
+				<title
+   id="title41-0-2">工作表.159</title>
+				<path
+   d="M 14.17,841.89 H 0"
+   class="st7"
+   id="path41-4-4"
+   style="stroke:#ffffff;stroke-width:2.25;stroke-opacity:1" />
+			</g>
+			<g
+   id="shape160-99-6-9"
+   v:mID="160"
+   v:groupContext="shape"
+   transform="translate(0,-9.07087)"
+   style="stroke:#ffffff;stroke-opacity:1">
+				<title
+   id="title42-0-2">工作表.160</title>
+				<path
+   d="M 14.17,841.89 H 0"
+   class="st7"
+   id="path42-3-9"
+   style="stroke:#ffffff;stroke-width:2.25;stroke-opacity:1" />
+			</g>
+			<g
+   id="shape161-102-2-1"
+   v:mID="161"
+   v:groupContext="shape"
+   transform="matrix(-8.9011792e-5,-1,-1,8.9011792e-5,848.976,829.626)"
+   style="stroke:#ffffff;stroke-opacity:1">
+				<title
+   id="title43-6-0">工作表.161</title>
+				<path
+   d="M 0,841.89 H 52.54"
+   class="st8"
+   id="path43-9-9"
+   style="stroke:#ffffff;stroke-width:2.25;stroke-linecap:butt;stroke-opacity:1" />
+			</g>
+			<g
+   id="shape162-105-4-3"
+   v:mID="162"
+   v:groupContext="shape"
+   transform="rotate(90,8.0075,840.9685)"
+   style="stroke:#ffffff;stroke-opacity:1">
+				<title
+   id="title44-1-0">工作表.162</title>
+				<path
+   d="M 0,841.89 H 12.74"
+   class="st8"
+   id="path44-3-0"
+   style="stroke:#ffffff;stroke-width:2.25;stroke-linecap:butt;stroke-opacity:1" />
+			</g>
+		</g><g
+   id="group163-108-7-3"
+   transform="rotate(-90,-361.27173,387.07565)"
+   v:mID="163"
+   v:groupContext="group"
+   style="stroke:#ffffff;stroke-opacity:1">
+			<title
+   id="title45-8-0">L.163</title>
+			<g
+   id="shape164-109-8-1"
+   v:mID="164"
+   v:groupContext="shape"
+   transform="matrix(0,-1,-1,0,841.89,835.853)"
+   style="stroke:#ffffff;stroke-opacity:1">
+				<title
+   id="title46-3-9">工作表.164</title>
+				<path
+   d="m 0.01,836.97 a 4.04556,3.35033 82.75 0 1 3.09,-4.15 4.2393,3.94749 1.76 0 1 4.21,3.99 5.00261,2.08612 85.76 0 1 -1.75,5.08 4.87898,2.74236 101.8 0 1 -1.89,-5.09 4.53697,4.24285 124.86 0 1 4.83,-3.99 5.17051,4.4306 2.63 0 1 5.33,4.36 4.58445,2.03887 85.04 0 1 -1.68,4.72 4.53549,2.54174 102.36 0 1 -1.72,-4.72 5.11534,4.67682 116.19 0 1 5.31,-4.36 4.72068,4.04692 2.32 0 1 4.84,4 4.95796,2.20955 86.18 0 1 -1.92,5.08 4.88285,2.87367 103.46 0 1 -1.95,-5.1 4.47486,3.96542 104.8 0 1 4.36,-3.98 3.98792,3.56354 106.64 0 1 3.16,4.16"
+   class="st7"
+   id="path46-8-8"
+   style="stroke:#ffffff;stroke-width:2.25;stroke-opacity:1" />
+			</g>
+			<g
+   id="shape165-112-1-6"
+   v:mID="165"
+   v:groupContext="shape"
+   transform="rotate(90,5.2925,841.1355)"
+   style="stroke:#ffffff;stroke-opacity:1">
+				<title
+   id="title47-5-9">工作表.165</title>
+				<path
+   d="M 0,841.89 H 7.06"
+   class="st7"
+   id="path47-3-0"
+   style="stroke:#ffffff;stroke-width:2.25;stroke-opacity:1" />
+			</g>
+			<g
+   id="shape166-115-5-1"
+   v:mID="166"
+   v:groupContext="shape"
+   transform="matrix(0,-1,-1,0,846.428,811.654)"
+   style="stroke:#ffffff;stroke-opacity:1">
+				<title
+   id="title48-4-6">工作表.166</title>
+				<path
+   d="M 0,841.89 H 45.43"
+   class="st7"
+   id="path48-3-4"
+   style="stroke:#ffffff;stroke-width:2.25;stroke-opacity:1" />
+			</g>
+		</g><g
+   id="shape167-118-6-4"
+   v:mID="167"
+   v:groupContext="shape"
+   transform="translate(111.9676,-820.77208)">
+			<title
+   id="title49-5-8">工作表.167</title>
+			<desc
+   id="desc49-9-6">LAB</desc>
+			<v:textBlock
+   v:margins="rect(2,2,2,2)"
+   v:tabSpace="42.5197"
+   v:verticalAlign="0" />
+			<v:textRect
+   cx="18.1417"
+   cy="833.528"
+   width="36.29"
+   height="16.7244" />
+			<rect
+   x="0"
+   y="825.16498"
+   width="36.283501"
+   height="16.7244"
+   class="st1"
+   id="rect49-5-1"
+   style="fill:none;stroke:none;stroke-width:1.5" />
+			<text
+   x="2.5799999"
+   y="839.77002"
+   class="st9"
+   v:langID="1033"
+   id="text49-4-4"
+   style="font-weight:bold;font-size:13.9999px;font-family:'Arial Black';fill:#4672c4"><v:paragraph
+     v:horizAlign="1" /><v:tabList /><tspan
+     style="fill:#ffffff;fill-opacity:1"
+     id="tspan83">LAB</tspan></text>		</g><g
+   id="shape168-121-9-0"
+   v:mID="168"
+   v:groupContext="shape"
+   transform="translate(17.290608,-820.77208)">
+			<title
+   id="title50-1-8">工作表.168</title>
+			<desc
+   id="desc50-7-1">HE</desc>
+			<v:textBlock
+   v:margins="rect(2,2,2,2)"
+   v:tabSpace="42.5197"
+   v:verticalAlign="0" />
+			<v:textRect
+   cx="16.1575"
+   cy="833.528"
+   width="32.32"
+   height="16.7244" />
+			<rect
+   x="0"
+   y="825.16498"
+   width="32.314999"
+   height="16.7244"
+   class="st1"
+   id="rect50-5-0"
+   style="fill:none;stroke:none;stroke-width:1.5" />
+			<text
+   x="5.27"
+   y="839.77002"
+   class="st9"
+   v:langID="1033"
+   id="text50-5-3"
+   style="font-weight:bold;font-size:13.9999px;font-family:'Arial Black';fill:#4672c4"><v:paragraph
+     v:horizAlign="1" /><v:tabList /><tspan
+     style="fill:#ffffff;fill-opacity:1"
+     id="tspan82">HE</tspan></text>		</g><g
+   id="group169-124-4-1"
+   transform="translate(9.9206074,-819.49608)"
+   v:mID="169"
+   v:groupContext="group">
+			<title
+   id="title51-1-1">VDD.169</title>
+			<g
+   id="shape170-125-8-5"
+   v:mID="170"
+   v:groupContext="shape"
+   transform="rotate(90,11.9055,837.0705)"
+   style="stroke:#ffffff;stroke-opacity:1">
+				<title
+   id="title52-8-0">工作表.170</title>
+				<path
+   d="M 0,841.89 H 16.63"
+   class="st10"
+   id="path52-3-8"
+   style="stroke:#ffffff;stroke-width:3;stroke-linecap:butt;stroke-opacity:1" />
+			</g>
+			<g
+   id="shape171-128-5-4"
+   v:mID="171"
+   v:groupContext="shape"
+   transform="translate(0,-16.7244)"
+   style="stroke:#ffffff;stroke-opacity:1">
+				<title
+   id="title53-2-9">工作表.171</title>
+				<path
+   d="M 0,841.89 H 14.17"
+   class="st11"
+   id="path53-2-3"
+   style="stroke:#ffffff;stroke-width:3;stroke-opacity:1" />
+			</g>
+		</g></svg>

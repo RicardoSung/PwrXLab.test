@@ -1,0 +1,18 @@
+Position:
+Principal Investigator/Alumni/Postdoc/Doctor of Philosophy/Doctor of engineering/Master of Philosophy/Master of Course/Master of engineering/Bachelor/Visiting
+
+Google Scholar:
+<Enter your link (you may use your ORCID or IEEE profile as an alternative). If you prefer not to share it, please delete this line.>
+
+Email:
+<Email. If you prefer not to share it, please delete this line.>
+
+Website:
+<Personal Website. If you prefer not to share it, please delete this line.>
+
+LinkedIn:
+<Personal Linkedin Link, If you prefer not to share it, please delete this line.>
+
+Introducton:
+<No more than 70 words.>
+Fei Song attained the B.E. degree in optoelectronic information science and engineering from University of Electronic Science and Technology of China (UESTC), Chengdu, China, in 2022. Subsequently, he received the M.Phil. degree in Microelectronics from University of Macau (UM), Macau SAR, China, in 2025. From July 2025 to Dec. 2025, he was a research assistant at Power X Lab.
