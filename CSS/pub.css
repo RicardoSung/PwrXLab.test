@@ -171,12 +171,13 @@
   width: 32px;
   height: 32px;
   margin-left: 4px;
-  margin-top: 2px;
+  margin-top: 0;
   border-radius: 50%;
   border: 1px solid var(--border-soft);
   background-color: #f9fafb;
   color: var(--primary);
   transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.12s ease, box-shadow 0.12s ease;
+  vertical-align: middle;
 }
 
 .pub-doi-link:hover {
@@ -196,6 +197,7 @@
 .pub-doi-icon {
   width: 16px;
   height: 16px;
+  display: block;
 }
 
 /* ========== Publications 页面在手机端的适配 ========== */

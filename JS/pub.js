@@ -9,12 +9,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const confListEl = document.getElementById("conf-list");
 
   let entries = [];
-  const doiIconSvg =
-    '<svg class="pub-doi-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
-    '<path d="M15 7h3a5 5 0 0 1 0 10h-3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>' +
-    '<path d="M9 17H6a5 5 0 0 1 0-10h3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>' +
-    '<path d="M8 12h8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>' +
-    "</svg>";
+  const doiIconHtml =
+    '<img class="pub-doi-icon" src="../Resources/icons/link.svg" alt="DOI link icon" />';
 
   // read ExPub.txt
   fetch("../Resources/pub/ExPub.txt")
@@ -57,7 +53,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let data = entries.slice();
 
-    // ... 搜索过滤 & 排序 ...
+    if (keyword) {
+      data = data.filter(function (e) {
+        const text = [
+          e.title,
+          e.rawAuthors,
+          e.journal,
+          e.booktitle,
+          e.publisher,
+          e.organization
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+        return text.includes(keyword);
+      });
+    }
+
+    data.sort(function (a, b) {
+      if (sortMode === "title-asc") {
+        return (a.title || "").localeCompare(b.title || "");
+      }
+      if (sortMode === "year-asc") {
+        return (a.year || 0) - (b.year || 0);
+      }
+      // 默认 year-desc
+      return (b.year || 0) - (a.year || 0);
+    });
 
     const books = bookListEl ? data.filter(isBookEntry) : [];
     const journals = data.filter(function (e) {
@@ -109,7 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const doi = extractDoiFromEntry(entry);
     const doiUrl = doi ? "https://doi.org/" + encodeURIComponent(doi) : "";
     const doiLink = doiUrl
-      ? `<a class="pub-doi-link" href="${doiUrl}" target="_blank" rel="noopener noreferrer" aria-label="Open DOI link" title="Open DOI">${doiIconSvg}</a>`
+      ? `<a class="pub-doi-link" href="${doiUrl}" target="_blank" rel="noopener noreferrer" aria-label="Open DOI link" title="Open DOI">${doiIconHtml}</a>`
       : "";
 
     return (
@@ -119,8 +141,8 @@ document.addEventListener("DOMContentLoaded", () => {
       displayIndex +
       "]</span>" +
       ieeeText +
-      "</div>" +
       doiLink +
+      "</div>" +
       "</li>"
     );
   }
@@ -345,9 +367,7 @@ function formatIEEE(entry) {
 
   // 标题加引号；如有 URL/DOI 就超链接
   const quotedTitle = `"${title}"`;
-  const titleHTML = url
-    ? `<a class="pub-title-link" href="${url}" target="_blank" rel="noopener noreferrer">${quotedTitle}</a>`
-    : quotedTitle;
+  const titleHTML = quotedTitle;
 
   // authors, "title",
   let base = authorsStr ? `${authorsStr}, ${titleHTML}, ` : `${titleHTML}, `;

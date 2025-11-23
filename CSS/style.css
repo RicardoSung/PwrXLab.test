@@ -170,10 +170,11 @@ h2::after {
 
 /* People 页面相关样式 */
 .people-container {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
   margin-bottom: 24px;
+  align-items: start;
 }
 
 /* 通用卡片样式 */
@@ -184,25 +185,34 @@ h2::after {
   border: 1px solid #e5e7eb;
   box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
   box-sizing: border-box;
+  position: relative;
 }
-/* 
+
 /* 点击头像后展开的抽屉区域 */
 .person-drawer {
-  flex: 0 0 100%;
-  max-width: 100%;
+  width: 100%;
   box-sizing: border-box;
-  margin-top: 8px;
+  margin-top: 10px;
+  background: transparent;
+  border-radius: 0;
+  border: none;
+  border-top: 1px solid var(--border-soft);
+  box-shadow: none;
+  padding: 12px 0 6px;
+}
+
+.person-drawer-row {
+  grid-column: 1 / -1;
   background: #ffffff;
-  border-radius: 12px;
   border: 1px solid var(--border-soft);
-  box-shadow: var(--shadow-soft);
+  border-radius: 12px;
   padding: 16px 20px;
 }
 
 .person-drawer-inner {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 
@@ -211,6 +221,11 @@ h2::after {
   display: flex;
   align-items: flex-start;
   gap: 12px;
+}
+
+.person-drawer-header.inline {
+  justify-content: space-between;
+  gap: 8px;
 }
 
 .person-drawer-avatar-wrap {
@@ -232,7 +247,7 @@ h2::after {
 
 .person-drawer-title {
   margin: 0;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
 }
 
@@ -249,7 +264,7 @@ h2::after {
 .person-drawer-section-title {
   margin: 0 0 4px;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 15px;
   color: var(--text-main);
 }
 
@@ -263,6 +278,33 @@ h2::after {
 .person-drawer-pubs {
   font-size: 14px;
   line-height: 1.6;
+}
+
+.person-drawer .pub-list {
+  gap: 6px;
+}
+
+.person-drawer .pub-item {
+  padding: 6px 0;
+  border: none;
+  box-shadow: none;
+  background: transparent;
+  align-items: flex-start;
+}
+
+.person-drawer .pub-index {
+  min-width: 34px;
+}
+
+.person-drawer .section-title {
+  font-size: 15px;
+  margin: 6px 0 6px;
+  font-weight: 600;
+}
+
+.person-drawer .pub-text {
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 /* 抽屉展开时，高亮卡片边框 */
@@ -279,11 +321,17 @@ h2::after {
   background: none;
   cursor: pointer;
   display: block;
+  width: 100%;
 }
 
 /* 非 PI 基本信息区域 */
 .person-basic {
   margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
 }
 
 .person-position {
@@ -324,6 +372,7 @@ h2::after {
   background: #ddd;
   display: block;
   margin: 0 auto;        /* 水平居中，不占满整个 card */
+  max-width: 100%;
 }
 
 .person-name {
@@ -349,6 +398,10 @@ h2::after {
   display: flex;
   gap: 8px;
   align-items: center;
+}
+
+.person-drawer-header .person-links {
+  margin-top: 0;
 }
 
 .icon-link {
@@ -402,24 +455,27 @@ h2::after {
 }
 
 /* 非 PI：大屏每行最多五个 */
-@media (min-width: 1100px) {
-  .people-container:not(#pi-container) .person-card {
-    flex: 0 0 calc(20% - 16px);
-    max-width: calc(20% - 16px);
-  }
+.people-container:not(#pi-container) .person-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 @media (max-width: 1099px) and (min-width: 768px) {
-  .people-container:not(#pi-container) .person-card {
-    flex: 0 0 calc(25% - 11px);
-    max-width: calc(25% - 11px);
+  .people-container:not(#pi-container) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 767px) {
-  .people-container:not(#pi-container) .person-card {
-    flex: 0 0 calc(33.33% - 8px);
-    max-width: calc(33.33% - 8px);
+@media (max-width: 767px) and (min-width: 520px) {
+  .people-container:not(#pi-container) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 519px) {
+  .people-container:not(#pi-container) {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
   }
 }
 

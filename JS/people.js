@@ -340,6 +340,26 @@ function pubTextToHtml(raw) {
   }
 
   // 单条 entry 的展示格式，尽量靠 publication 页风格
+  function normalizeDoi(rawVal) {
+    if (!rawVal) return "";
+    var doi = String(rawVal).trim();
+    doi = doi.replace(/^https?:\/\/(dx\.)?doi\.org\//i, "");
+    doi = doi.replace(/^doi:\s*/i, "");
+    doi = doi.replace(/[)\].,;:]+$/g, "");
+    return doi;
+  }
+
+  function extractDoi(f) {
+    if (!f) return "";
+    if (f.doi) return normalizeDoi(f.doi);
+    if (f.url && /10\.\d/.test(f.url)) return normalizeDoi(f.url);
+    var joined = [f.note, f.journal, f.booktitle, f.title]
+      .filter(Boolean)
+      .join(" ");
+    var m = joined.match(/\b10\.\d{4,9}\/\S+\b/);
+    return m ? normalizeDoi(m[0]) : "";
+  }
+
   function formatEntry(e) {
     var f = e.fields;
     var authors = f.author || f.authors || "";
@@ -350,60 +370,38 @@ function pubTextToHtml(raw) {
     var citation = f.citation || f.url || "";
     var note = f.note || "";
 
+    var doi = extractDoi(f);
+    var link = doi
+      ? "https://doi.org/" + encodeURIComponent(doi)
+      : citation;
+
+    var titleHtml = title ? '"' + escapeHtml(title) + '"' : "";
+
     var parts = [];
-
     if (authors) {
-      parts.push(
-        '<span class="pub-authors">' +
-          escapeHtml(authors) +
-          ".</span>"
-      );
+      parts.push(escapeHtml(authors));
+    }
+    if (titleHtml) {
+      parts.push(titleHtml);
+    }
+    if (venue) {
+      parts.push("<em>" + escapeHtml(venue) + "</em>");
+    }
+    if (pages) {
+      parts.push("pp. " + escapeHtml(pages));
+    }
+    if (year) {
+      parts.push(escapeHtml(year));
     }
 
-    if (title) {
-      parts.push(
-        '<span class="pub-title">' +
-          escapeHtml(title) +
-          ".</span>"
-      );
+    var body = parts.join(", ");
+    if (body && body.slice(-1) !== ".") {
+      body += ".";
     }
-
-    if (venue || year) {
-      var venueStr = venue ? escapeHtml(venue) : "";
-      if (year) {
-        venueStr = venueStr ? venueStr + ", " + escapeHtml(year) : escapeHtml(year);
-      }
-      if (pages) {
-        venueStr += ", " + escapeHtml(pages);
-      }
-      if (venueStr) {
-        parts.push(
-          '<span class="pub-venue">' + venueStr + ".</span>"
-        );
-      }
-    }
-
-    if (citation) {
-      parts.push(
-        '<a class="pub-link" href="' +
-          escapeAttr(citation) +
-          '" target="_blank" rel="noopener noreferrer">Link</a>'
-      );
-    } else {
-      // 从 note 中抓 DOI 链接
-      var doiMatch = /10\.\d{4,9}\/\S*/.exec(note);
-      if (doiMatch) {
-        var doi = doiMatch[0];
-        var url = "https://doi.org/" + doi;
-        parts.push(
-          '<a class="pub-link" href="' +
-            escapeAttr(url) +
-            '" target="_blank" rel="noopener noreferrer">DOI</a>'
-        );
-      }
-    }
-
-    return parts.join(" ");
+    return {
+      text: body,
+      link: link
+    };
   }
 
   function renderGroup(title, list) {
@@ -413,9 +411,21 @@ function pubTextToHtml(raw) {
     html +=
       '<h4 class="section-title">' + escapeHtml(title) + "</h4>";
     html += '<ol class="pub-list">';
-    list.forEach(function (e) {
+    list.forEach(function (e, idx) {
+      var entry = formatEntry(e);
+      var linkHtml = entry.link
+        ? '<a class="pub-doi-link" href="' +
+          escapeAttr(entry.link) +
+          '" target="_blank" rel="noopener noreferrer" aria-label="Open publication link">' +
+          '<img class="pub-doi-icon" src="../Resources/icons/link.svg" alt="Link icon" />' +
+          "</a>"
+        : "";
       html += '<li class="pub-item">';
-      html += formatEntry(e);
+      html += '<div class="pub-text">';
+      html += '<span class="pub-index">[' + (idx + 1) + "]</span>";
+      html += entry.text;
+      html += linkHtml;
+      html += "</div>";
       html += "</li>";
     });
     html += "</ol>";
@@ -479,50 +489,25 @@ function openDrawerForPerson(person, card) {
   currentDrawerPerson = person;
 
   var drawer = document.createElement("div");
-  drawer.className = "person-drawer";
+  drawer.className = "person-drawer person-drawer-row";
 
   var inner = document.createElement("div");
   inner.className = "person-drawer-inner";
 
-  // 头部：名字 + 职位
-  var header = document.createElement("div");
-  header.className = "person-drawer-header";
+  // 简介
+  if (person.intro) {
+    var sec2 = document.createElement("div");
+    sec2.className = "person-drawer-section";
 
-  // 左侧：头像
-  var avatarWrap = document.createElement("div");
-  avatarWrap.className = "person-drawer-avatar-wrap";
+    var secText2 = document.createElement("div");
+    secText2.className = "person-drawer-text";
+    secText2.textContent = person.intro;
+    sec2.appendChild(secText2);
 
-  var avatar = document.createElement("img");
-  avatar.className = "person-drawer-avatar";
-  avatar.src = person.photoUrl;
-  avatar.alt = person.name;
-  avatar.onerror = function () {
-    this.style.display = "none";
-  };
-  avatarWrap.appendChild(avatar);
-
-  // 右侧：姓名 + 职位
-  var textBox = document.createElement("div");
-  textBox.className = "person-drawer-header-text";
-
-  var titleEl = document.createElement("h3");
-  titleEl.className = "person-drawer-title";
-  titleEl.textContent = person.name;
-  textBox.appendChild(titleEl);
-
-  if (person.position) {
-    var posEl = document.createElement("p");
-    posEl.className = "person-drawer-position";
-    posEl.textContent = person.position;
-    textBox.appendChild(posEl);
+    inner.appendChild(sec2);
   }
 
-  header.appendChild(avatarWrap);
-  header.appendChild(textBox);
-
-  inner.appendChild(header);
-
-  // Research Interests
+  // Research Interests（在简介之后）
   if (person.research) {
     var sec1 = document.createElement("div");
     sec1.className = "person-drawer-section";
@@ -538,24 +523,6 @@ function openDrawerForPerson(person, card) {
     sec1.appendChild(secText1);
 
     inner.appendChild(sec1);
-  }
-
-  // 简介
-  if (person.intro) {
-    var sec2 = document.createElement("div");
-    sec2.className = "person-drawer-section";
-
-    var secTitle2 = document.createElement("div");
-    secTitle2.className = "person-drawer-section-title";
-    secTitle2.textContent = "Introduction";
-    sec2.appendChild(secTitle2);
-
-    var secText2 = document.createElement("div");
-    secText2.className = "person-drawer-text";
-    secText2.textContent = person.intro;
-    sec2.appendChild(secText2);
-
-    inner.appendChild(sec2);
   }
 
   // Publications：读取个人目录 pub.txt
@@ -576,9 +543,27 @@ function openDrawerForPerson(person, card) {
 
   drawer.appendChild(inner);
 
-  // 插在当前卡片后面（一行中下一项，宽度 100%）
+  // 插在当前卡片之后，作为单独一行铺满容器
   var parent = card.parentNode;
-  parent.insertBefore(drawer, card.nextSibling);
+  if (parent) {
+    var computed = window.getComputedStyle(parent);
+    var colsStr = computed.gridTemplateColumns || "";
+    var colCount = colsStr ? colsStr.split(/\s+/).filter(Boolean).length : 1;
+    if (colCount < 1) colCount = 1;
+
+    var cards = Array.prototype.filter.call(parent.children, function (el) {
+      return el.classList && el.classList.contains("person-card");
+    });
+
+    var idx = cards.indexOf(card);
+    var rowEndIdx = Math.min(
+      cards.length - 1,
+      Math.floor(idx / colCount) * colCount + (colCount - 1)
+    );
+    var insertAfterCard = cards[rowEndIdx] || card;
+    var refNode = insertAfterCard.nextSibling;
+    parent.insertBefore(drawer, refNode);
+  }
 
   currentDrawerEl = drawer;
 
@@ -690,15 +675,15 @@ function createPersonCard(person) {
     var basic = document.createElement("div");
     basic.className = "person-basic";
 
-    var positionEl2 = document.createElement("div");
-    positionEl2.className = "person-position";
-    positionEl2.textContent = person.position || "";
-    basic.appendChild(positionEl2);
-
     var nameEl2 = document.createElement("div");
     nameEl2.className = "person-name";
     nameEl2.textContent = person.name;
     basic.appendChild(nameEl2);
+
+    var positionEl2 = document.createElement("div");
+    positionEl2.className = "person-position";
+    positionEl2.textContent = person.position || "";
+    basic.appendChild(positionEl2);
 
     var linksRow2 = createLinksRow(person);
     if (linksRow2) {

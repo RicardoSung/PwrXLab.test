@@ -1,6 +1,9 @@
 Position:
 Postdoc
 
+Research Interests:
+Solutions of efficient and high-performance power management circuits for robotics applications
+
 Google Scholar:
 https://scholar.google.com/citations?user=6RUKT0wAAAAJ&hl=zh-CN
 
