@@ -760,30 +760,24 @@ function renderPeople(data) {
     }
   );
 
-  function sortByName(list) {
-    return list.slice().sort(function (a, b) {
-      return a.name.localeCompare(b.name);
-    });
-  }
-
   // PI 一般只有一个，保持顺序
   data.pi.forEach(function (p) {
     piContainer.appendChild(createPersonCard(p));
   });
 
-  sortByName(data.postdoc).forEach(function (p) {
+  data.postdoc.forEach(function (p) {
     postdocContainer.appendChild(createPersonCard(p));
   });
 
-  sortByName(data.graduate).forEach(function (p) {
+  data.graduate.forEach(function (p) {
     graduateContainer.appendChild(createPersonCard(p));
   });
 
-  sortByName(data.bachelor_visiting).forEach(function (p) {
+  data.bachelor_visiting.forEach(function (p) {
     bachelorVisitingContainer.appendChild(createPersonCard(p));
   });
 
-  sortByName(data.alumni).forEach(function (p) {
+  data.alumni.forEach(function (p) {
     alumniContainer.appendChild(createPersonCard(p));
   });
 }
