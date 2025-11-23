@@ -1,3 +1,20 @@
+@ARTICLE{Liu2024-yr,
+  title     = "A wireless controlled robotic insect with ultrafast untethered
+               running speeds",
+  author    = "Liu, Zhiwei and Zhan, Wencheng and Liu, Xinyi and Zhu, Yangsheng
+               and Qi, Mingjing and Leng, Jiaming and Wei, Lizhao and Han,
+               Shousheng and Wu, Xiaoming and Yan, Xiaojun",
+  journal   = "Nat. Commun.",
+  publisher = "Springer Science and Business Media LLC",
+  volume    =  15,
+  number    =  1,
+  pages     = "3815",
+  month     =  may,
+  year      =  2024,
+  copyright = "https://creativecommons.org/licenses/by/4.0",
+  language  = "en"
+}
+
 @ARTICLE{11215673,
   author={Han, Shousheng and Fang, Zanfeng and Tong, Zhiguo and Wu, Xiaoming and Jiang, Hanjun and Ren, Tianling and Lu, Yan},
   journal={IEEE Journal of Solid-State Circuits}, 
